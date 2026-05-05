@@ -28,6 +28,7 @@ from buildbot_worker.commands.base import Command
 if TYPE_CHECKING:
     from io import BufferedIOBase
     from io import BufferedWriter
+    from io import TextIOWrapper
     from typing import TypeVar
 
     from twisted.internet.defer import Deferred
@@ -292,6 +293,7 @@ class WorkerFileDownloadCommand(TransferCommand):
         - ['maxsize']:   max size (in bytes) of file to write
         - ['blocksize']: max size for each data block
         - ['mode']:      access mode for the new file
+        - ['encoding']:  If specified open file in text mode and decode bytes with this encoding
     """
 
     debug = False
@@ -303,9 +305,10 @@ class WorkerFileDownloadCommand(TransferCommand):
         self.bytes_remaining = args['maxsize']
         self.blocksize = args['blocksize']
         self.mode = args['mode']
+        self.encoding = args['encoding']
         self.stderr = None
         self.rc = 0
-        self.fp: BufferedWriter | None = None
+        self.fp: BufferedWriter | TextIOWrapper | None = None
 
     def start(self) -> Deferred[None]:
         if self.debug:
@@ -316,7 +319,10 @@ class WorkerFileDownloadCommand(TransferCommand):
             os.makedirs(dirname)
 
         try:
-            self.fp = open(self.path, 'wb')
+            if self.encoding:
+                self.fp = open(self.path, 'w')
+            else:
+                self.fp = open(self.path, 'wb')
             if self.debug:
                 self.log_msg(f"Opened '{self.path}' for download")
             if self.mode is not None:
@@ -400,7 +406,10 @@ class WorkerFileDownloadCommand(TransferCommand):
             assert self.bytes_remaining >= 0
 
         assert self.fp is not None
-        self.fp.write(data)
+        if self.encoding:
+            self.fp.write(data.decode(self.encoding))
+        else:
+            self.fp.write(data)
         return False
 
     def finished(self, res: bool | Failure | None) -> bool | Failure | None:

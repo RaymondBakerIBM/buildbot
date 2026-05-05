@@ -344,6 +344,7 @@ class CompositeStepMixin:
         workerdest: str,
         strfile: str,
         abandonOnFailure: bool = False,
+        encoding: str | None = None,
         mode: int | None = None,
         workdir: str | None = None,
     ) -> Any:
@@ -357,6 +358,7 @@ class CompositeStepMixin:
             'workdir': workdir,
             'maxsize': None,
             'mode': mode,
+            'encoding': encoding,
             'reader': fileReader,
             'blocksize': 32 * 1024,
         }

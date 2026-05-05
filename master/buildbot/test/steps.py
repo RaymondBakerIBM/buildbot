@@ -513,6 +513,7 @@ class ExpectDownloadFile(Expect):
         workdir: str | None = None,
         reader: ExpectRemoteRef | None = None,
         mode: int | None = None,
+        encoding: str | None = None,
         interrupted: bool = False,
         slavesrc: str | None = None,
         slavedest: str | None = None,
@@ -521,6 +522,7 @@ class ExpectDownloadFile(Expect):
             'workdir': workdir,
             'reader': reader,
             'mode': mode,
+            'encoding': encoding,
             'blocksize': blocksize,
             'maxsize': maxsize,
         }

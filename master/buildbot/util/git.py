@@ -671,6 +671,7 @@ class GitStepAuth(AbstractGitAuth):
             path,
             content,
             mode=mode,
+            encoding='utf-8',
             workdir=workdir,
         )
 

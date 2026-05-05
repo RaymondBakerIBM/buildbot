@@ -454,6 +454,7 @@ class FileDownload(_TransferBuildStep):
         maxsize: int | None = None,
         blocksize: int = 16 * 1024,
         mode: int | None = None,
+        encoding: None | str = None,
         **buildstep_kwargs: Any,
     ) -> None:
         # Emulate that first two arguments are positional.
@@ -469,6 +470,7 @@ class FileDownload(_TransferBuildStep):
         if not isinstance(mode, (int, type(None))):
             config.error('mode must be an integer or None')
         self.mode = mode
+        self.encoding = encoding
 
     @defer.inlineCallbacks
     def run(self) -> InlineCallbacksType[int]:
@@ -500,6 +502,7 @@ class FileDownload(_TransferBuildStep):
             'blocksize': self.blocksize,
             'workdir': self.workdir,
             'mode': self.mode,
+            'encoding': self.encoding,
         }
 
         if self.workerVersionIsOlderThan('downloadFile', '3.0'):
@@ -524,6 +527,7 @@ class StringDownload(_TransferBuildStep):
         workdir: str | None = None,
         maxsize: int | None = None,
         blocksize: int = 16 * 1024,
+        encoding: str | None = None,
         mode: int | None = None,
         **buildstep_kwargs: Any,
     ) -> None:
@@ -540,6 +544,7 @@ class StringDownload(_TransferBuildStep):
         if not isinstance(mode, (int, type(None))):
             config.error(f"StringDownload step's mode must be an integer or None, got '{mode}'")
         self.mode = mode
+        self.encoding = encoding
 
     @defer.inlineCallbacks
     def run(self) -> InlineCallbacksType[int]:
@@ -564,6 +569,7 @@ class StringDownload(_TransferBuildStep):
             'blocksize': self.blocksize,
             'workdir': self.workdir,
             'mode': self.mode,
+            'encoding': self.encoding,
         }
 
         if self.workerVersionIsOlderThan('downloadFile', '3.0'):
